@@ -1,8 +1,5 @@
 import Config
 
-# UUID as default pk
-config :bottich, YourApp.Repo, migration_primary_key: [type: :binary_id]
-
 # Configure your database
 config :bottich, Bottich.Repo,
   username: "postgres",

@@ -49,9 +49,9 @@ defmodule Bottich.BottichLink do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_link(attrs \\ %{}) do
-    %Link{}
-    |> Link.changeset(attrs)
+  def create_link(attrs \\ %{}, list) do
+    Ecto.build_assoc(list, :links, attrs)
+    |> Link.changeset(%{})
     |> Repo.insert()
   end
 

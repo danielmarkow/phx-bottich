@@ -16,3 +16,12 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Docs: https://hexdocs.pm/phoenix
   * Forum: https://elixirforum.com/c/phoenix-forum
   * Source: https://github.com/phoenixframework/phoenix
+
+## TODOs
+- setup auth
+- lists are create by a user
+- lists may be shared to specific users
+  - they may have edit or view only rights
+- lists may be public (read-only)
+- lists can be liked
+- pretty way to share social media links (spotify, youtube, etc.)

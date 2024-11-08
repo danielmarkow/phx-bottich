@@ -6,6 +6,7 @@ defmodule Bottich.BottichLink.Link do
   schema "links" do
     field :link, :string
     field :description, :string
+    field :list_id, :integer
     belongs_to :lists, BottichLists.List
 
     timestamps(type: :utc_datetime)
