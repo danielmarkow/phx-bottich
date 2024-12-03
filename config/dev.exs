@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :bottich, Bottich.Repo,
   username: "postgres",
-  password: "pw",
+  password: "postgres",
   hostname: "localhost",
   database: "bottich_dev",
   stacktrace: true,

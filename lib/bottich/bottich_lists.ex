@@ -35,7 +35,7 @@ defmodule Bottich.BottichLists do
       ** (Ecto.NoResultsError)
 
   """
-  def get_list!(id), do: Repo.get!(List, id)
+  def get_list!(id), do: Repo.get!(List, id) |> Repo.preload(:links)
 
   @doc """
   Creates a list.
