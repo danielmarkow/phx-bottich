@@ -1,11 +1,12 @@
 defmodule Bottich.BottichLink.Link do
+  alias Bottich.BottichLists
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "links" do
     field :link, :string
     field :description, :string
-    field :list_id, :integer
+    belongs_to :list, BottichLists.List
 
     timestamps(type: :utc_datetime)
   end

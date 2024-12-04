@@ -1,4 +1,6 @@
 defmodule BottichWeb.ListLive do
+  alias Bottich.BottichLink.Link
+  alias Bottich.BottichLink
   alias Bottich.BottichLists
   alias Bottich.Validators
   require Logger
@@ -8,11 +10,12 @@ defmodule BottichWeb.ListLive do
     case Validators.validate_int_id(list_id) do
       {:ok, integer} ->
         list = BottichLists.get_list!(list_id)
+        changeset = BottichLink.change_link(%Link{})
 
         {:ok,
          socket
          |> stream(:links, list.links)
-         |> assign(list_id: integer, list: Map.drop(list, [:links]))}
+         |> assign(list_id: integer, list: Map.drop(list, [:links]), form: to_form(changeset))}
 
       {:error} ->
         Logger.error("someone tried passing a invalid integer to /list/:list_id")
@@ -26,7 +29,65 @@ defmodule BottichWeb.ListLive do
       <%= @list.name %>
       <:subtitle><%= @list.description %></:subtitle>
     </.header>
-    <p><%= @list_id %></p>
+    <div class="h-6" />
+    <div phx-update="stream" id="links" class="flex flex-col gap-y-2">
+      <div
+        :for={{link_id, link} <- @streams.links}
+        class="border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
+        id={link_id}
+      >
+        <a href={link.link} class="underline"><%= link.description %></a>
+        <p><%= link.description %></p>
+      </div>
+    </div>
+    <div class="h-6" />
+    <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
+      <h2 class="font-semibold leading-6 ">new link</h2>
+      <.form for={@form} phx-submit="save_link" phx-validate="validate_link">
+        <div class="flex flex-col gap-y-2">
+          <.input
+            type="url"
+            label="link"
+            id="link"
+            name="link"
+            autocomplete="off"
+            field={@form[:link]}
+            phx-debounce="1000"
+            required
+          />
+          <.input
+            type="textarea"
+            label="description"
+            id="description"
+            name="description"
+            autocomplete="off"
+            field={@form[:description]}
+            phx-debounce="1000"
+            required
+          />
+          <.button phx-disabled-with="saving...">save</.button>
+        </div>
+      </.form>
+    </div>
     """
+  end
+
+  def handle_event("save_link", link_params, socket) do
+    IO.inspect(link_params)
+    # link_params_with_fk = Map.merge(link_params, %{"list_id" => socket.assigns.list_id})
+    case BottichLink.create_link(link_params, socket.assigns.list) do
+      {:ok, link} ->
+        {:noreply, socket |> stream_insert(:links, link, at: 0)}
+
+      {:error, changeset} ->
+        IO.inspect(changeset)
+        Logger.error("an error occurred saving link", error: inspect(changeset))
+        {:noreply, socket |> put_flash(:error, "an error occurred saving the link")}
+    end
+  end
+
+  def handle_event("validate_link", link_params, socket) do
+    form = %Link{} |> BottichLink.change_link(link_params) |> to_form(action: :validate)
+    {:noreply, socket |> assign(form: form)}
   end
 end
