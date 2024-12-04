@@ -63,7 +63,12 @@ defmodule BottichWeb.ListLive do
             field={@form[:description]}
             phx-debounce="1000"
           />
-          <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">save</.button>
+          <div />
+          <div class="flex justify-center">
+            <.button disabled={!@form.source.valid?} phx-disabled-with="saving..." class="w-2/3">
+              save
+            </.button>
+          </div>
         </div>
       </.form>
     </div>
