@@ -36,24 +36,23 @@ defmodule BottichWeb.ListLive do
         class="border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
         id={link_id}
       >
-        <a href={link.link} class="underline"><%= link.description %></a>
+        <a href={link.url} class="underline"><%= link.url %></a>
         <p><%= link.description %></p>
       </div>
     </div>
     <div class="h-6" />
     <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
       <h2 class="font-semibold leading-6 ">new link</h2>
-      <.form for={@form} phx-submit="save_link" phx-validate="validate_link">
+      <.form for={@form} phx-submit="save" phx-change="validate">
         <div class="flex flex-col gap-y-2">
           <.input
-            type="url"
-            label="link"
-            id="link"
-            name="link"
+            type="text"
+            label="url"
+            id="url"
+            name="url"
             autocomplete="off"
-            field={@form[:link]}
+            field={@form[:url]}
             phx-debounce="1000"
-            required
           />
           <.input
             type="textarea"
@@ -63,21 +62,21 @@ defmodule BottichWeb.ListLive do
             autocomplete="off"
             field={@form[:description]}
             phx-debounce="1000"
-            required
           />
-          <.button phx-disabled-with="saving...">save</.button>
+          <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">save</.button>
         </div>
       </.form>
     </div>
     """
   end
 
-  def handle_event("save_link", link_params, socket) do
-    IO.inspect(link_params)
-    # link_params_with_fk = Map.merge(link_params, %{"list_id" => socket.assigns.list_id})
-    case BottichLink.create_link(link_params, socket.assigns.list) do
+  def handle_event("save", link_params, socket) do
+    # Ecto.build_assoc wants atoms
+    attrs = Map.new(link_params, fn {key, val} -> {String.to_existing_atom(key), val} end)
+
+    case BottichLink.create_link(attrs, socket.assigns.list) do
       {:ok, link} ->
-        {:noreply, socket |> stream_insert(:links, link, at: 0)}
+        {:noreply, socket |> stream_insert(:links, link, at: -1)}
 
       {:error, changeset} ->
         IO.inspect(changeset)
@@ -86,7 +85,7 @@ defmodule BottichWeb.ListLive do
     end
   end
 
-  def handle_event("validate_link", link_params, socket) do
+  def handle_event("validate", link_params, socket) do
     form = %Link{} |> BottichLink.change_link(link_params) |> to_form(action: :validate)
     {:noreply, socket |> assign(form: form)}
   end
