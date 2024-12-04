@@ -3,3 +3,13 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.hatched-background {
+  background: repeating-linear-gradient(
+    -45deg,
+    white,
+    white 30px,
+    rgb(0,0,0, 0.1) 30px,
+    rgb(0,0,0, 0.1) 31px
+  );
+  min-height: 150vh;
+}

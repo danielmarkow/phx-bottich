@@ -25,6 +25,8 @@ defmodule BottichWeb.ListLive do
 
   def render(assigns) do
     ~H"""
+    <div class="bg-white p-1 sm:p-10">
+    <div class="h-6" />
     <.header class="text-center">
       <%= @list.name %>
       <:subtitle><%= @list.description %></:subtitle>
@@ -52,7 +54,6 @@ defmodule BottichWeb.ListLive do
             name="url"
             autocomplete="off"
             field={@form[:url]}
-            phx-debounce="1000"
           />
           <.input
             type="textarea"
@@ -61,7 +62,6 @@ defmodule BottichWeb.ListLive do
             name="description"
             autocomplete="off"
             field={@form[:description]}
-            phx-debounce="1000"
           />
           <div />
           <div class="flex justify-center">
@@ -71,6 +71,7 @@ defmodule BottichWeb.ListLive do
           </div>
         </div>
       </.form>
+    </div>
     </div>
     """
   end

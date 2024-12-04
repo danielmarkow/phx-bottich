@@ -231,7 +231,7 @@ defmodule BottichWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 bg-black hover:bg-zinc-700 py-2 px-3 cursor-pointer disabled:cursor-not-allowed disabled:bg-zinc-700",
+        "phx-submit-loading:opacity-75 bg-black py-2 px-3 border border-black cursor-pointer disabled:cursor-not-allowed disabled:bg-zinc-700",
         "text-sm font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}
@@ -429,7 +429,7 @@ defmodule BottichWeb.CoreComponents do
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
-        <h1 class="text-2xl font-semibold leading-8 text-zinc-800">
+        <h1 class="text-2xl font-extrabold leading-8 text-zinc-800">
           <%= render_slot(@inner_block) %>
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
