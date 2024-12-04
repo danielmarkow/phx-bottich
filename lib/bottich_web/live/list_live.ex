@@ -15,7 +15,7 @@ defmodule BottichWeb.ListLive do
         {:ok,
          socket
          |> stream(:links, list.links)
-         |> assign(list_id: integer, list: Map.drop(list, [:links]), form: to_form(changeset))}
+         |> assign(list_id: integer, list: Map.drop(list, [:links]), form: to_form(changeset), link_id: nil)}
 
       {:error} ->
         Logger.error("someone tried passing a invalid integer to /list/:list_id")
@@ -34,10 +34,10 @@ defmodule BottichWeb.ListLive do
       <div phx-update="stream" id="links" class="flex flex-col gap-y-2">
         <div
           :for={{link_id, link} <- @streams.links}
-          class="grid grid-cols-4 border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
+          class="grid grid-cols-2 sm:grid-cols-5 border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
           id={link_id}
         >
-          <div class="col-span-3">
+          <div class="col-span-1 sm:col-span-4">
             <a href={link.url} class="underline"><%= link.url %></a>
             <p><%= link.description %></p>
           </div>
@@ -83,9 +83,17 @@ defmodule BottichWeb.ListLive do
               field={@form[:description]}
             />
             <div />
-            <div class="flex justify-center">
+            <div class="flex justify-center" :if={@link_id == nil}>
               <.button disabled={!@form.source.valid?} phx-disabled-with="saving..." class="w-2/3">
                 save
+              </.button>
+            </div>
+            <div class="grid grid-cols-2 gap-x-1" :if={@link_id != nil}>
+              <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">
+                save
+              </.button>
+              <.button type="button">
+                abort
               </.button>
             </div>
           </div>
@@ -96,17 +104,32 @@ defmodule BottichWeb.ListLive do
   end
 
   def handle_event("save", link_params, socket) do
-    # Ecto.build_assoc wants atoms
-    attrs = Map.new(link_params, fn {key, val} -> {String.to_existing_atom(key), val} end)
 
-    case BottichLink.create_link(attrs, socket.assigns.list) do
-      {:ok, link} ->
-        {:noreply, socket |> stream_insert(:links, link, at: -1)}
 
-      {:error, changeset} ->
-        Logger.error("an error occurred saving link", error: inspect(changeset))
-        {:noreply, socket |> put_flash(:error, "an error occurred saving the link")}
+    if socket.assigns.link_id != nil do
+      link = BottichLink.get_link!(socket.assigns.link_id)
+      case BottichLink.update_link(link, link_params) do
+        {:ok, link} ->
+          changeset = BottichLink.change_link(%Link{})
+          {:noreply, socket |> stream_insert(:links, link) |> assign(link_id: nil, form: to_form(changeset))}
+        {:error, changeset} ->
+          Logger.error("an error occurred updating link")
+          {:noreply, socket |> put_flash(:error, "an error occurred updating the link #{socket.assigns.link_id}")}
+        end
+      else
+      # Ecto.build_assoc wants atoms
+      attrs = Map.new(link_params, fn {key, val} -> {String.to_existing_atom(key), val} end)
+      case BottichLink.create_link(attrs, socket.assigns.list) do
+        {:ok, link} ->
+          changeset = BottichLink.change_link(%Link{})
+          {:noreply, socket |> stream_insert(:links, link, at: -1) |> assign(form: to_form(changeset))}
+
+        {:error, changeset} ->
+          Logger.error("an error occurred saving link")
+          {:noreply, socket |> put_flash(:error, "an error occurred saving the link")}
+      end
     end
+
   end
 
   def handle_event("validate", link_params, socket) do
@@ -115,7 +138,9 @@ defmodule BottichWeb.ListLive do
   end
 
   def handle_event("edit_link", %{"id" => link_id}, socket) do
-    {:noreply, socket}
+    link = BottichLink.get_link!(link_id)
+    changeset = BottichLink.change_link(link)
+    {:noreply, socket |> assign(form: to_form(changeset), link_id: link_id)}
   end
 
   def handle_event("delete_link", %{"id" => link_id}, socket) do
