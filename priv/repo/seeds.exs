@@ -13,15 +13,16 @@ alias Bottich.BottichLink
 alias Bottich.Repo
 alias Bottich.BottichLists.List
 
-testlist = Repo.insert!(%List{
-  name: "Search Engines",
-  description: "ways to search the web"
-})
+testlist =
+  Repo.insert!(%List{
+    name: "Search Engines",
+    description: "ways to search the web"
+  })
 
 links = [
   %{link: "https://www.google.de", description: "google it"},
   %{link: "https://www.bing.de", description: "bing it"},
-  %{link: "https://www.duckduckgo.com", description: "duck it"},
+  %{link: "https://www.duckduckgo.com", description: "duck it"}
 ]
 
 for link <- links do

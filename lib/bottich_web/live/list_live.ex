@@ -11,11 +11,18 @@ defmodule BottichWeb.ListLive do
       {:ok, integer} ->
         list = BottichLists.get_list!(list_id)
         changeset = BottichLink.change_link(%Link{})
+        empty = if length(list.links) > 0, do: false, else: true
 
         {:ok,
          socket
          |> stream(:links, list.links)
-         |> assign(list_id: integer, list: Map.drop(list, [:links]), form: to_form(changeset), link_id: nil)}
+         |> assign(
+           list_id: integer,
+           list: Map.drop(list, [:links]),
+           form: to_form(changeset),
+           link_id: nil,
+           empty: empty
+         )}
 
       {:error} ->
         Logger.error("someone tried passing a invalid integer to /list/:list_id")
@@ -27,19 +34,19 @@ defmodule BottichWeb.ListLive do
     ~H"""
     <div class="bg-white p-1 sm:p-10">
       <.header class="text-center">
-        <%= @list.name %>
-        <:subtitle><%= @list.description %></:subtitle>
+        {@list.name}
+        <:subtitle>{@list.description}</:subtitle>
       </.header>
       <div class="h-6" />
-      <div phx-update="stream" id="links" class="flex flex-col gap-y-2">
+      <div :if={@empty == false} phx-update="stream" id="links" class="flex flex-col gap-y-2">
         <div
           :for={{link_id, link} <- @streams.links}
           class="grid grid-cols-2 sm:grid-cols-5 border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
           id={link_id}
         >
           <div class="col-span-1 sm:col-span-4">
-            <a href={link.url} class="underline"><%= link.url %></a>
-            <p><%= link.description %></p>
+            <a href={link.url} class="underline">{link.url}</a>
+            <p>{link.description}</p>
           </div>
           <div class="flex flex-col justify-end gap-y-1">
             <button
@@ -59,6 +66,11 @@ defmodule BottichWeb.ListLive do
               delete
             </button>
           </div>
+        </div>
+      </div>
+      <div :if={@empty == true} class="flex flex-col gap-y-2">
+        <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
+          no entries yet
         </div>
       </div>
       <div class="h-6" />
@@ -83,12 +95,12 @@ defmodule BottichWeb.ListLive do
               field={@form[:description]}
             />
             <div />
-            <div class="flex justify-center" :if={@link_id == nil}>
+            <div :if={@link_id == nil} class="flex justify-center">
               <.button disabled={!@form.source.valid?} phx-disabled-with="saving..." class="w-2/3">
                 save
               </.button>
             </div>
-            <div class="grid grid-cols-2 gap-x-1" :if={@link_id != nil}>
+            <div :if={@link_id != nil} class="grid grid-cols-2 gap-x-1">
               <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">
                 save
               </.button>
@@ -104,32 +116,41 @@ defmodule BottichWeb.ListLive do
   end
 
   def handle_event("save", link_params, socket) do
-
-
     if socket.assigns.link_id != nil do
       link = BottichLink.get_link!(socket.assigns.link_id)
+
       case BottichLink.update_link(link, link_params) do
         {:ok, link} ->
           changeset = BottichLink.change_link(%Link{})
-          {:noreply, socket |> stream_insert(:links, link) |> assign(link_id: nil, form: to_form(changeset))}
+
+          {:noreply,
+           socket
+           |> stream_insert(:links, link)
+           |> assign(link_id: nil, form: to_form(changeset), empty: false)}
+
         {:error, changeset} ->
           Logger.error("an error occurred updating link")
-          {:noreply, socket |> put_flash(:error, "an error occurred updating the link #{socket.assigns.link_id}")}
-        end
-      else
+
+          {:noreply,
+           socket
+           |> put_flash(:error, "an error occurred updating the link #{socket.assigns.link_id}")}
+      end
+    else
       # Ecto.build_assoc wants atoms
       attrs = Map.new(link_params, fn {key, val} -> {String.to_existing_atom(key), val} end)
+
       case BottichLink.create_link(attrs, socket.assigns.list) do
         {:ok, link} ->
           changeset = BottichLink.change_link(%Link{})
-          {:noreply, socket |> stream_insert(:links, link, at: -1) |> assign(form: to_form(changeset))}
 
-        {:error, changeset} ->
+          {:noreply,
+           socket |> stream_insert(:links, link, at: -1) |> assign(form: to_form(changeset))}
+
+        {:error, _changeset} ->
           Logger.error("an error occurred saving link")
           {:noreply, socket |> put_flash(:error, "an error occurred saving the link")}
       end
     end
-
   end
 
   def handle_event("validate", link_params, socket) do
@@ -145,9 +166,14 @@ defmodule BottichWeb.ListLive do
 
   def handle_event("delete_link", %{"id" => link_id}, socket) do
     link = BottichLink.get_link!(link_id)
+
     case BottichLink.delete_link(link) do
       {:ok, link} ->
-        {:noreply, socket |> stream_delete(:links, link)}
+        list = BottichLists.get_list!(link.list_id)
+        # TODO optimize
+        empty = if length(list.links) > 0, do: false, else: true
+        {:noreply, socket |> assign(empty: empty) |> stream_delete(:links, link)}
+
       {:error, _} ->
         Logger.error("an error occurred deleting link #{link_id}")
         {:noreply, socket |> put_flash(:error, "an error occurred deleting the link")}
