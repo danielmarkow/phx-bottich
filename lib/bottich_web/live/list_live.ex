@@ -75,7 +75,8 @@ defmodule BottichWeb.ListLive do
       </div>
       <div class="h-6" />
       <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
-        <h2 class="font-semibold leading-6 ">new link</h2>
+        <h2 :if={@link_id != nil} class="font-semibold leading-6">edit link</h2>
+        <h2 :if={@link_id == nil} class="font-semibold leading-6">new link</h2>
         <.form for={@form} phx-submit="save" phx-change="validate">
           <div class="flex flex-col gap-y-2">
             <.input
@@ -104,7 +105,7 @@ defmodule BottichWeb.ListLive do
               <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">
                 save
               </.button>
-              <.button type="button">
+              <.button type="button" phx-click="abort_edit">
                 abort
               </.button>
             </div>
@@ -128,7 +129,7 @@ defmodule BottichWeb.ListLive do
            |> stream_insert(:links, link)
            |> assign(link_id: nil, form: to_form(changeset), empty: false)}
 
-        {:error, changeset} ->
+        {:error, _changeset} ->
           Logger.error("an error occurred updating link")
 
           {:noreply,
@@ -156,6 +157,11 @@ defmodule BottichWeb.ListLive do
   def handle_event("validate", link_params, socket) do
     form = %Link{} |> BottichLink.change_link(link_params) |> to_form(action: :validate)
     {:noreply, socket |> assign(form: form)}
+  end
+
+  def handle_event("abort_edit", _params, socket) do
+    changeset = BottichLink.change_link(%Link{})
+    {:noreply, socket |> assign(link_id: nil, form: to_form(changeset))}
   end
 
   def handle_event("edit_link", %{"id" => link_id}, socket) do
