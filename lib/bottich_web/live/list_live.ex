@@ -145,11 +145,16 @@ defmodule BottichWeb.ListLive do
           changeset = BottichLink.change_link(%Link{})
 
           {:noreply,
-           socket |> stream_insert(:links, link, at: -1) |> assign(form: to_form(changeset))}
+           socket
+           |> stream_insert(:links, link, at: -1)
+           |> assign(form: to_form(changeset), empty: false)}
 
         {:error, _changeset} ->
           Logger.error("an error occurred saving link")
-          {:noreply, socket |> put_flash(:error, "an error occurred saving the link")}
+
+          {:noreply,
+           socket
+           |> put_flash(:error, "an error occurred saving the link")}
       end
     end
   end
