@@ -26,7 +26,7 @@ defmodule BottichWeb.ListLive do
 
       {:error} ->
         Logger.error("someone tried passing a invalid integer to /list/:list_id")
-        {:ok, socket |> put_flash(:error, "Invalid url parameter") |> push_navigate(to: "/")}
+        {:ok, socket |> push_navigate(to: "/") |> put_flash(:error, "Invalid url parameter")}
     end
   end
 

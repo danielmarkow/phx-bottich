@@ -20,9 +20,11 @@ defmodule BottichWeb.Router do
     get "/", PageController, :home
   end
 
-  scope "/list", BottichWeb do
+  scope "/", BottichWeb do
     pipe_through :browser
-    live "/:list_id", ListLive
+    live "/list/:list_id", ListLive
+    live "/list", ListOverviewLive
+    live "/newlist", ListNewLive
   end
 
   # Other scopes may use custom stacks.
