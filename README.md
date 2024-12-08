@@ -18,8 +18,8 @@ Ready to run in production? Please [check our deployment guides](https://hexdocs
   * Source: https://github.com/phoenixframework/phoenix
 
 ## TODOs
-- setup auth
-- lists are create by a user
+- setup auth :heavy_check_mark:
+- lists are create by a user :heavy_check_mark:
 - lists may be shared to specific users
   - they may have edit or view only rights
 - lists may be public (read-only)
