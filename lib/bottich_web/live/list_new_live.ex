@@ -47,7 +47,8 @@ defmodule BottichWeb.ListNewLive do
   end
 
   def handle_event("save_list", list_params, socket) do
-    case BottichLists.create_list(list_params) do
+    appended_params = Map.merge(list_params, %{"user_id" => socket.assigns.current_user.id})
+    case BottichLists.create_list(appended_params) do
       {:ok, list} ->
         {:noreply, socket |> push_navigate(to: "/list/#{list.id}")}
 
@@ -58,7 +59,8 @@ defmodule BottichWeb.ListNewLive do
   end
 
   def handle_event("validate", list_params, socket) do
-    form = %List{} |> BottichLists.change_list(list_params) |> to_form(action: :validate)
+    appended_params = Map.merge(list_params, %{"user_id" => socket.assigns.current_user.id})
+    form = %List{} |> BottichLists.change_list(appended_params) |> to_form(action: :validate)
     {:noreply, socket |> assign(form: form)}
   end
 end

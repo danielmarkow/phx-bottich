@@ -15,7 +15,7 @@ defmodule Bottich.BottichLists.List do
   @doc false
   def changeset(list, attrs) do
     list
-    |> cast(attrs, [:name, :description])
-    |> validate_required([:name, :description])
+    |> cast(attrs, [:name, :description, :user_id])
+    |> validate_required([:name, :description, :user_id])
   end
 end
