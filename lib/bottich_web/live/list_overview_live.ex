@@ -25,7 +25,7 @@ defmodule BottichWeb.ListOverviewLive do
         </div>
       </div>
       <div class="h-6" />
-      <div class="grid sm:grid-cols-2 grid-cols-1" phx-update="stream" id="lists">
+      <div class="grid sm:grid-cols-2 grid-cols-1 gap-x-2" phx-update="stream" id="lists">
         <div
           :for={{list_id, list} <- @streams.lists}
           id={list_id}

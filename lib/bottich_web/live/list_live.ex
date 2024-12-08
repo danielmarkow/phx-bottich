@@ -45,15 +45,15 @@ defmodule BottichWeb.ListLive do
           id={link_id}
         >
           <div class="col-span-1 sm:col-span-4">
-            <a href={link.url} class="underline">{link.url}</a>
+            <a href={link.url} class="underline line-clamp-2">{link.url}</a>
             <p>{link.description}</p>
           </div>
-          <div class="flex flex-col justify-end gap-y-1">
+          <div class="flex flex-col items-start gap-y-1">
             <button
               type="button"
               phx-click="edit_link"
               phx-value-id={link.id}
-              class="text-sm border border-black px-1 [box-shadow:2px_2px_black] hover:bg-zinc-200"
+              class="text-sm border border-black px-1 [box-shadow:2px_2px_black] hover:bg-zinc-200 w-full"
             >
               edit
             </button>
@@ -61,7 +61,7 @@ defmodule BottichWeb.ListLive do
               type="button"
               phx-click="delete_link"
               phx-value-id={link.id}
-              class="text-sm border border-black px-1 [box-shadow:2px_2px_black] hover:bg-zinc-200"
+              class="text-sm border border-black px-1 [box-shadow:2px_2px_black] hover:bg-zinc-200 w-full"
             >
               delete
             </button>
