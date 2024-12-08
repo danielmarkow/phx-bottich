@@ -3,7 +3,7 @@ defmodule BottichWeb.ListOverviewLive do
   use BottichWeb, :live_view
 
   def mount(_params, _session, socket) do
-    lists = BottichLists.list_lists()
+    lists = BottichLists.list_lists(socket.assigns.current_user.id)
     {:ok, socket |> stream(:lists, lists)}
   end
 

@@ -15,12 +15,14 @@
     <div class="bg-white p-1 px-3">
       <div class="flex justify-between">
         <div>
-          <.link
-            class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-            navigate={~p"/list"}
-          >
-            home
-          </.link>
+          <%= if @current_user do %>
+            <.link
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+              navigate={~p"/list"}
+            >
+              home
+            </.link>
+          <% end %>
         </div>
         <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
           <%= if @current_user do %>

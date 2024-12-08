@@ -25,9 +25,13 @@ defmodule BottichWeb.Router do
 
   scope "/", BottichWeb do
     pipe_through [:browser, :require_authenticated_user]
-    live "/list/:list_id", ListLive
-    live "/list", ListOverviewLive
-    live "/newlist", ListNewLive
+
+    live_session :require_authenticated_user_list,
+      on_mount: [{BottichWeb.UserAuth, :ensure_authenticated}] do
+      live "/list/:list_id", ListLive
+      live "/list", ListOverviewLive
+      live "/newlist", ListNewLive
+    end
   end
 
   # Other scopes may use custom stacks.

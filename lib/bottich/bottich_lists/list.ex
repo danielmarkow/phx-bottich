@@ -7,6 +7,7 @@ defmodule Bottich.BottichLists.List do
     field :name, :string
     field :description, :string
     has_many :links, BottichLink.Link
+    belongs_to :users, Bottich.Accounts.User, foreign_key: :user_id
 
     timestamps(type: :utc_datetime)
   end
