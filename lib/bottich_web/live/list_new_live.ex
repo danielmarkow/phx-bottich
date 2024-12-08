@@ -1,6 +1,7 @@
 defmodule BottichWeb.ListNewLive do
   alias Bottich.BottichLists.List
   alias Bottich.BottichLists
+  require Logger
   use BottichWeb, :live_view
 
   def mount(_params, _session, socket) do
@@ -43,5 +44,21 @@ defmodule BottichWeb.ListNewLive do
       </div>
     </div>
     """
+  end
+
+  def handle_event("save_list", list_params, socket) do
+    case BottichLists.create_list(list_params) do
+      {:ok, list} ->
+        {:noreply, socket |> push_navigate(to: "/list/#{list.id}")}
+
+      {:error, _} ->
+        Logger.error("an error occurred creating a new list /newlist")
+        {:noreply, socket |> put_flash(:error, "an error occurred creating the new list")}
+    end
+  end
+
+  def handle_event("validate", list_params, socket) do
+    form = %List{} |> BottichLists.change_list(list_params) |> to_form(action: :validate)
+    {:noreply, socket |> assign(form: form)}
   end
 end
