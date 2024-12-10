@@ -8,9 +8,10 @@ defmodule Bottich.Accounts.UserNotifier do
     email =
       new()
       |> to(recipient)
-      |> from({"Bottich", "contact@example.com"})
+      |> from({"Bottich Support", "support@markow.dev"})
       |> subject(subject)
       |> text_body(body)
+      |> put_provider_option(:message_stream, "outbound")
 
     with {:ok, _metadata} <- Mailer.deliver(email) do
       {:ok, email}
