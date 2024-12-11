@@ -34,6 +34,13 @@ defmodule BottichWeb.Router do
     end
   end
 
+  # public lists
+  scope "/public", BottichWeb do
+    pipe_through :browser
+
+    live "/list/:list_id", PublicListLive
+  end
+
   # Other scopes may use custom stacks.
   # scope "/api", BottichWeb do
   #   pipe_through :api
