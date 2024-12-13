@@ -12,38 +12,25 @@
     </script>
   </head>
   <body class="hatched-background">
-    <div class="bg-white p-1 px-3">
+    <div class="bg-gray-100 p-1 px-3">
       <div class="flex justify-between">
-        <div>
+        <div class="px-4 sm:px-6 lg:px-20">
           <%= if @current_user do %>
-            <.link
-              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              navigate={~p"/list"}
-            >
-              home
+            <.link navigate={~p"/list"}>
+              <.icon name="hero-list-bullet" class="h-8 w-8 sm:h-6 sm:w-6" />
             </.link>
           <% end %>
         </div>
-        <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+        <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-20 justify-end">
           <%= if @current_user do %>
-            <li class="text-[0.8125rem] leading-6 text-zinc-900">
-              {@current_user.email}
-            </li>
             <li>
-              <.link
-                href={~p"/users/settings"}
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                Settings
+              <.link href={~p"/users/settings"}>
+                <.icon name="hero-cog-8-tooth" class="h-8 w-8 sm:h-6 sm:w-6" />
               </.link>
             </li>
             <li>
-              <.link
-                href={~p"/users/log_out"}
-                method="delete"
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                Log out
+              <.link href={~p"/users/log_out"} method="delete">
+                <.icon name="hero-arrow-left-start-on-rectangle" class="h-8 w-8 sm:h-6 sm:w-6" />
               </.link>
             </li>
           <% else %>
@@ -52,7 +39,7 @@
                 href={~p"/users/register"}
                 class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
               >
-                Register
+                sign up
               </.link>
             </li>
             <li>
@@ -60,7 +47,7 @@
                 href={~p"/users/log_in"}
                 class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
               >
-                Log in
+                log in
               </.link>
             </li>
           <% end %>

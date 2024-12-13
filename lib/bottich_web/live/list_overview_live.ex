@@ -9,7 +9,7 @@ defmodule BottichWeb.ListOverviewLive do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-white p-1 sm:p-10">
+    <div class="bg-gray-50 p-1 sm:p-10">
       <div class="flex flex-cols-2 justify-between items-center">
         <div>
           <.header>Your lists</.header>

@@ -31,7 +31,7 @@ defmodule BottichWeb.PublicListLive do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-white p-1 sm:p-10">
+    <div class="bg-gray-50 p-1 sm:p-10">
       <.header class="text-center">
         {@list.name}
         <:subtitle>{@list.description}</:subtitle>
