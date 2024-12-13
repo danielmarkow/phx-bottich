@@ -1,12 +1,27 @@
 defmodule BottichWeb.PublicListLive do
+  alias Bottich.BottichLists
   alias Bottich.Validators
+  alias BottichWeb.ListComponent
   require Logger
   use BottichWeb, :live_view
 
   def mount(%{"list_id" => list_id}, _session, socket) do
     case Validators.validate_int_id(list_id) do
       {:ok, integer} ->
-        {:ok, socket |> assign(list_id: integer)}
+        list = BottichLists.get_public_list!(list_id)
+
+        if list == nil do
+          {:ok,
+           socket
+           |> push_navigate(to: "/")
+           |> put_flash(:error, "list does not exist or is not public")}
+        else
+          empty = if length(list.links) > 0, do: false, else: true
+          {:ok,
+           socket
+           |> stream(:links, list.links)
+           |> assign(list_id: integer, list: Map.drop(list, [:links]), empty: empty)}
+        end
 
       {:error} ->
         Logger.error("someone tried passing a invalid integer to /public/list/:list_id")
@@ -16,9 +31,21 @@ defmodule BottichWeb.PublicListLive do
 
   def render(assigns) do
     ~H"""
-    <div>
-      hello public
-      <p>{@list_id}</p>
+    <div class="bg-white p-1 sm:p-10">
+      <.header class="text-center">
+        {@list.name}
+        <:subtitle>{@list.description}</:subtitle>
+      </.header>
+      <div class="h-6" />
+      <div :if={@empty == false} phx-update="stream" id="links" class="flex flex-col gap-y-2">
+        <ListComponent.public_list_entry :for={{link_id, link} <- @streams.links} link_id={link_id} link={link} />
+      </div>
+      <div :if={@empty == true} class="flex flex-col gap-y-2">
+        <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
+          no entries yet
+        </div>
+      </div>
+      <div class="h-6" />
     </div>
     """
   end

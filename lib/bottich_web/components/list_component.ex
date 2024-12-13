@@ -32,4 +32,18 @@ defmodule BottichWeb.ListComponent do
     </div>
     """
   end
+
+  def public_list_entry(assigns) do
+    ~H"""
+    <div
+      class=" border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
+      id={@link_id}
+    >
+      <div>
+        <a href={@link.url} class="underline line-clamp-2">{@link.url}</a>
+        <p>{@link.description}</p>
+      </div>
+    </div>
+    """
+  end
 end

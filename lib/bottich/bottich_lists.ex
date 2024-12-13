@@ -38,6 +38,12 @@ defmodule Bottich.BottichLists do
   """
   def get_list!(id), do: Repo.get!(List, id) |> Repo.preload(:links)
 
+  def get_public_list!(id) do
+    from(l in List, where: l.id == ^id and l.public == ^true)
+    |> Repo.one()
+    |> Repo.preload(:links)
+  end
+
   @doc """
   Creates a list.
 

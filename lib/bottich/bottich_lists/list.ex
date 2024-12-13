@@ -6,6 +6,7 @@ defmodule Bottich.BottichLists.List do
   schema "lists" do
     field :name, :string
     field :description, :string
+    field :public, :boolean
     has_many :links, BottichLink.Link
     belongs_to :users, Bottich.Accounts.User, foreign_key: :user_id
 
