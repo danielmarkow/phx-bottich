@@ -60,7 +60,6 @@ defmodule BottichWeb.ListLive do
               name="url"
               autocomplete="off"
               field={@form[:url]}
-              class="bg-gray-50"
             />
             <.input
               type="textarea"
