@@ -4,10 +4,10 @@ defmodule BottichWeb.ListComponent do
   def list_entry(assigns) do
     ~H"""
     <div
-      class="grid grid-cols-2 sm:grid-cols-5 border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
+      class="grid grid-cols-5 border border-2 border-black p-1 [box-shadow:6px_6px_black] hover:[box-shadow:6px_6px_gray]"
       id={@link_id}
     >
-      <div class="col-span-1 sm:col-span-4">
+      <div class="col-span-4">
         <a href={@link.url} class="underline line-clamp-2">{@link.url}</a>
         <p>{@link.description}</p>
       </div>
