@@ -99,7 +99,7 @@ defmodule BottichWeb.ListLive do
         </div>
       </div>
       <div class="h-6" />
-      <div class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
+      <div id="link-editor" class="border border-2 border-black p-1 [box-shadow:6px_6px_black]">
         <h2 :if={@link_id != nil} class="font-semibold leading-6">edit link</h2>
         <h2 :if={@link_id == nil} class="font-semibold leading-6">new link</h2>
         <.form for={@form} phx-submit="save" phx-change="validate">
@@ -207,7 +207,11 @@ defmodule BottichWeb.ListLive do
   def handle_event("edit_link", %{"id" => link_id}, socket) do
     link = BottichLink.get_link!(link_id)
     changeset = BottichLink.change_link(link)
-    {:noreply, socket |> assign(form: to_form(changeset), link_id: String.to_integer(link_id))}
+
+    {:noreply,
+     socket
+     |> assign(form: to_form(changeset), link_id: String.to_integer(link_id))
+     |> push_event("scroll_to", %{selector: "#link-editor"})}
   end
 
   def handle_event("delete_link", %{"id" => link_id}, socket) do
