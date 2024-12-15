@@ -36,7 +36,11 @@ defmodule Bottich.BottichLists do
       ** (Ecto.NoResultsError)
 
   """
-  def get_list!(id), do: Repo.get!(List, id) |> Repo.preload(:links)
+  def get_list(user_id, id) do
+    from(l in List, where: l.user_id == ^user_id and l.id == ^id)
+    |> Repo.one()
+    |> Repo.preload(:links)
+  end
 
   def get_public_list!(id) do
     from(l in List, where: l.id == ^id and l.public == ^true)

@@ -6,7 +6,7 @@ defmodule Bottich.BottichLists.List do
   schema "lists" do
     field :name, :string
     field :description, :string
-    field :public, :boolean
+    field :public, :boolean, default: false
     has_many :links, BottichLink.Link
     belongs_to :users, Bottich.Accounts.User, foreign_key: :user_id
 
@@ -16,7 +16,7 @@ defmodule Bottich.BottichLists.List do
   @doc false
   def changeset(list, attrs) do
     list
-    |> cast(attrs, [:name, :description, :user_id])
+    |> cast(attrs, [:name, :description, :user_id, :public])
     |> validate_required([:name, :description, :user_id])
   end
 end
