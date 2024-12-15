@@ -13,6 +13,11 @@ defmodule BottichWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :lv_rate_limit do
+    plug RemoteIp
+    plug :rate_limit, "public_list_live"
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -36,7 +41,7 @@ defmodule BottichWeb.Router do
 
   # public lists
   scope "/public", BottichWeb do
-    pipe_through :browser
+    pipe_through [:browser, :lv_rate_limit]
 
     live "/list/:list_id", PublicListLive
   end
@@ -98,6 +103,22 @@ defmodule BottichWeb.Router do
       on_mount: [{BottichWeb.UserAuth, :mount_current_user}] do
       live "/users/confirm/:token", UserConfirmationLive, :edit
       live "/users/confirm", UserConfirmationInstructionsLive, :new
+    end
+  end
+
+  defp rate_limit(conn, namespace) do
+    case Bottich.RateLimit.hit({namespace, conn.remote_ip}, _scale = :timer.seconds(10), _limit = 10) do
+      {:allow, _count} ->
+        conn
+
+      # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Retry-After
+      {:deny, retry_after_ms} ->
+        retry_after_seconds = div(retry_after_ms, 1000)
+
+        conn
+        |> put_resp_header("retry-after", Integer.to_string(retry_after_seconds))
+        |> send_resp(429, "You are too fast, and you are rate limited. Try again in #{retry_after_seconds} seconds.")
+        |> halt()
     end
   end
 end

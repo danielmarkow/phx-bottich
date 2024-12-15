@@ -17,7 +17,8 @@ defmodule Bottich.Application do
       # Start a worker by calling: Bottich.Worker.start_link(arg)
       # {Bottich.Worker, arg},
       # Start to serve requests, typically the last entry
-      BottichWeb.Endpoint
+      BottichWeb.Endpoint,
+      Bottich.RateLimit
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
