@@ -243,6 +243,37 @@ defmodule BottichWeb.CoreComponents do
   end
 
   @doc """
+  Renders a secondary button.
+
+  ## Examples
+
+      <.button>Send!</.button>
+      <.button phx-click="go" class="ml-2">Send!</.button>
+  """
+  attr :type, :string, default: nil
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(disabled form name value)
+
+  slot :inner_block, required: true
+
+  def secondary_button(assigns) do
+    ~H"""
+    <button
+      type={@type}
+      class={[
+        "phx-submit-loading:opacity-75 bg-zinc-50 py-2 px-3 border-2 border-black cursor-pointer",
+        "text-sm font-semibold leading-6 text-zinc-900",
+        @class
+      ]}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </button>
+    """
+  end
+
+  @spec input(map()) :: Phoenix.LiveView.Rendered.t()
+  @doc """
   Renders an input with label and error messages.
 
   A `Phoenix.HTML.FormField` may be passed as argument,

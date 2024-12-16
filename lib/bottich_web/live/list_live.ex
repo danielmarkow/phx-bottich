@@ -147,9 +147,9 @@ defmodule BottichWeb.ListLive do
               <.button disabled={!@form.source.valid?} phx-disabled-with="saving...">
                 save
               </.button>
-              <.button type="button" phx-click="abort_edit">
+              <.secondary_button type="button" phx-click="abort_edit">
                 abort
-              </.button>
+              </.secondary_button>
             </div>
           </div>
         </.form>
