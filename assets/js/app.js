@@ -28,6 +28,16 @@ let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken }
 })
 
+// click to copy
+window.addEventListener("phx:clipcopy", (event) => {
+  if ("clipboard" in navigator) {
+    const text = event.target.textContent;
+    navigator.clipboard.writeText(text);
+  } else {
+    alert("Sorry, your browser does not support clipboard copy.");
+  }
+});
+
 // scroll to form when editing link
 window.addEventListener("phx:scroll_to", () => {
   const element = document.querySelector("#link-editor");

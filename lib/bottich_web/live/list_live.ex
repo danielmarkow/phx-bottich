@@ -58,18 +58,26 @@ defmodule BottichWeb.ListLive do
         {@list.name}
         <:subtitle>{@list.description}</:subtitle>
       </.header>
-      <div class="h-2" />
+      <div class="h-1" />
       <div class="text-center">
-        <p class="text-sm text-zinc-600">
+        <p>
           <%= if @list.public do %>
-            this list is <span class="font-semibold">public</span>
-            at
-            <.link
-              class="underline cursor-pointer text-sm text-zinc-800"
-              href={~p"/public/list/#{@list_id}"}
-            >
-              {url(~p"/")}public/list/{@list_id}
-            </.link>
+            <div class="flex gap-x-1 justify-center text-sm text-zinc-600">
+              <div>
+                this list is <span class="font-semibold">public</span>
+                at
+                <.link
+                  class="underline cursor-pointer text-sm text-zinc-800"
+                  href={~p"/public/list/#{@list_id}"}
+                  id="public-link"
+                >
+                  {url(~p"/")}public/list/{@list_id}
+                </.link>
+              </div>
+              <button type="button" phx-click={JS.dispatch("phx:clipcopy", to: "#public-link")}>
+                <.icon name="hero-clipboard-document" class="h-8 w-8 sm:h-5 sm:w-5 cursor-pointer" />
+              </button>
+            </div>
             <div class="h-1" />
             <p
               class="underline cursor-pointer text-sm text-zinc-800"
