@@ -40,7 +40,9 @@ defmodule BottichWeb.ListLive do
       <div :if={@list.public == false}>
         <p>this list is private</p>
         <div class="h-2" />
-        <.button type="button" phx-click="toggle_public">make public</.button>
+        <.button type="button" phx-click={JS.push("toggle_public") |> hide_modal("visibility-modal")}>
+          set public
+        </.button>
       </div>
       <div :if={@list.public}>
         <p>
@@ -48,9 +50,14 @@ defmodule BottichWeb.ListLive do
           <.link href={~p"/public/list/#{@list_id}"} class="underline">
             {url(~p"/")}public/list/{@list_id}
           </.link>
+          <button type="button" phx-click={JS.dispatch("phx:clipcopy", to: "#public-link")}>
+            <.icon name="hero-clipboard-document" class="h-8 w-8 sm:h-5 sm:w-5 cursor-pointer" />
+          </button>
         </p>
-        <div class="h-2" />
-        <.button type="button" phx-click="toggle_public">make private</.button>
+        <div class="h-6" />
+        <.button type="button" phx-click={JS.push("toggle_public") |> hide_modal("visibility-modal")}>
+          set private
+        </.button>
       </div>
     </.modal>
     <div class="bg-gray-50 p-1 sm:p-10">
@@ -63,7 +70,7 @@ defmodule BottichWeb.ListLive do
         <p>
           <%= if @list.public do %>
             <div class="flex gap-x-1 justify-center text-sm text-zinc-600">
-              <div>
+              <div class="flex items-center gap-x-1">
                 this list is <span class="font-semibold">public</span>
                 at
                 <.link
@@ -86,10 +93,12 @@ defmodule BottichWeb.ListLive do
               click to change
             </p>
           <% else %>
-            this is list is <span class="font-semibold">private</span>
-            <span class="underline cursor-pointer" phx-click={show_modal("visibility-modal")}>
-              click to change
-            </span>
+            <div class="text-sm text-zinc-600">
+              this is list is <span class="font-semibold">private</span>
+              <span class="underline cursor-pointer" phx-click={show_modal("visibility-modal")}>
+                click to change
+              </span>
+            </div>
           <% end %>
         </p>
       </div>
