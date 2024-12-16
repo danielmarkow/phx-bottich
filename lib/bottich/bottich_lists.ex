@@ -18,7 +18,7 @@ defmodule Bottich.BottichLists do
 
   """
   def list_lists(user_id) do
-    from(l in List, where: l.user_id == ^user_id)
+    from(l in List, where: l.user_id == ^user_id, order_by: [desc: l.updated_at])
     |> Repo.all()
   end
 
