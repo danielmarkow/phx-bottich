@@ -10,51 +10,66 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
-    <script defer data-domain="bottich.link" src="https://plausible.io/js/script.js"></script>
+    <script defer data-domain="bottich.link" src="https://plausible.io/js/script.js">
+    </script>
   </head>
-  <body class="hatched-background">
-    <div class="bg-gray-100 p-1 px-3">
-      <div class="flex justify-between">
-        <div class="px-4 sm:px-6 lg:px-20">
-          <%= if @current_user do %>
-            <.link navigate={~p"/list"}>
-              <.icon name="hero-list-bullet" class="h-8 w-8 sm:h-6 sm:w-6" />
-            </.link>
-          <% end %>
+  <body class="hatched-background h-full">
+    <div class="min-h-full flex flex-col">
+      <main class="flex-grow">
+        <div class="bg-gray-100 p-1 px-3">
+          <div class="flex justify-between">
+            <div class="px-4 sm:px-6 lg:px-20">
+              <%= if @current_user do %>
+                <.link navigate={~p"/list"}>
+                  <.icon name="hero-list-bullet" class="h-8 w-8 sm:h-6 sm:w-6" />
+                </.link>
+              <% end %>
+            </div>
+            <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-20 justify-end">
+              <%= if @current_user do %>
+                <li>
+                  <.link href={~p"/users/settings"}>
+                    <.icon name="hero-cog-8-tooth" class="h-8 w-8 sm:h-6 sm:w-6" />
+                  </.link>
+                </li>
+                <li>
+                  <.link href={~p"/users/log_out"} method="delete">
+                    <.icon
+                      name="hero-arrow-left-start-on-rectangle"
+                      class="h-8 w-8 sm:h-6 sm:w-6"
+                    />
+                  </.link>
+                </li>
+              <% else %>
+                <li>
+                  <.link
+                    href={~p"/users/register"}
+                    class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                  >
+                    sign up
+                  </.link>
+                </li>
+                <li>
+                  <.link
+                    href={~p"/users/log_in"}
+                    class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+                  >
+                    log in
+                  </.link>
+                </li>
+              <% end %>
+            </ul>
+          </div>
         </div>
-        <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-20 justify-end">
-          <%= if @current_user do %>
-            <li>
-              <.link href={~p"/users/settings"}>
-                <.icon name="hero-cog-8-tooth" class="h-8 w-8 sm:h-6 sm:w-6" />
-              </.link>
-            </li>
-            <li>
-              <.link href={~p"/users/log_out"} method="delete">
-                <.icon name="hero-arrow-left-start-on-rectangle" class="h-8 w-8 sm:h-6 sm:w-6" />
-              </.link>
-            </li>
-          <% else %>
-            <li>
-              <.link
-                href={~p"/users/register"}
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                sign up
-              </.link>
-            </li>
-            <li>
-              <.link
-                href={~p"/users/log_in"}
-                class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
-              >
-                log in
-              </.link>
-            </li>
-          <% end %>
-        </ul>
-      </div>
+        {@inner_content}
+      </main>
+      <footer>
+        <div class="flex justify-center gap-x-5 text-sm text-zinc-500 cursor-pointer underline">
+          <.link href={~p"/sitenotice"}>site notice</.link>
+          <.link href={~p"/dataprotection"}>data protection</.link>
+          <.link href={~p"/about"}>about</.link>
+        </div>
+      </footer>
     </div>
-    {@inner_content}
   </body>
 </html>

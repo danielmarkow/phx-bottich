@@ -28,6 +28,7 @@ defmodule BottichWeb.Router do
     get "/", PageController, :home
     get "/sitenotice", ImpressumController, :impressum
     get "/dataprotection", DatenschutzController, :datenschutz
+    get "/about", AboutController, :about
   end
 
   scope "/", BottichWeb do
