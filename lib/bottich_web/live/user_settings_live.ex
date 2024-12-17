@@ -5,7 +5,7 @@ defmodule BottichWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="bg-white">
+    <div class="bg-zinc-50">
       <.header class="text-center">
         Account Settings
         <:subtitle>Manage your account email address and password settings</:subtitle>
