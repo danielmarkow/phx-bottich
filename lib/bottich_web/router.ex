@@ -27,6 +27,7 @@ defmodule BottichWeb.Router do
 
     get "/", PageController, :home
     get "/sitenotice", ImpressumController, :impressum
+    get "/dataprotection", DatenschutzController, :datenschutz
   end
 
   scope "/", BottichWeb do
@@ -108,7 +109,11 @@ defmodule BottichWeb.Router do
   end
 
   defp rate_limit(conn, namespace) do
-    case Bottich.RateLimit.hit({namespace, conn.remote_ip}, _scale = :timer.seconds(10), _limit = 10) do
+    case Bottich.RateLimit.hit(
+           {namespace, conn.remote_ip},
+           _scale = :timer.seconds(10),
+           _limit = 10
+         ) do
       {:allow, _count} ->
         conn
 
@@ -118,7 +123,10 @@ defmodule BottichWeb.Router do
 
         conn
         |> put_resp_header("retry-after", Integer.to_string(retry_after_seconds))
-        |> send_resp(429, "You are too fast, and you are rate limited. Try again in #{retry_after_seconds} seconds.")
+        |> send_resp(
+          429,
+          "You are too fast, and you are rate limited. Try again in #{retry_after_seconds} seconds."
+        )
         |> halt()
     end
   end
