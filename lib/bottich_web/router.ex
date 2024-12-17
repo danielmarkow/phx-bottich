@@ -26,6 +26,7 @@ defmodule BottichWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    get "/sitenotice", ImpressumController, :impressum
   end
 
   scope "/", BottichWeb do
