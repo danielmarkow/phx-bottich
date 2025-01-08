@@ -94,7 +94,7 @@ defmodule BottichWeb.ListLive do
             </p>
           <% else %>
             <div class="text-sm text-zinc-600">
-              this is list is <span class="font-semibold">private</span>
+              this list is <span class="font-semibold">private</span>
               <span class="underline cursor-pointer" phx-click={show_modal("visibility-modal")}>
                 click to change
               </span>
