@@ -7,8 +7,8 @@ defmodule BottichWeb.PublicListLive do
 
   def mount(%{"list_id" => list_id}, _session, socket) do
     case Validators.validate_int_id(list_id) do
-      {:ok, integer} ->
-        list = BottichLists.get_public_list!(list_id)
+      {:ok, integer_list_id} ->
+        list = BottichLists.get_public_list!(integer_list_id)
 
         if list == nil do
           {:ok,
@@ -20,7 +20,7 @@ defmodule BottichWeb.PublicListLive do
           {:ok,
            socket
            |> stream(:links, list.links)
-           |> assign(list_id: integer, list: Map.drop(list, [:links]), empty: empty)}
+           |> assign(list_id: integer_list_id, list: Map.drop(list, [:links]), empty: empty)}
         end
 
       {:error} ->
