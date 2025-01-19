@@ -10,8 +10,8 @@ defmodule BottichWeb.ListLive do
 
   def mount(%{"list_id" => list_id}, _session, socket) do
     case Validators.validate_int_id(list_id) do
-      {:ok, integer} ->
-        list = BottichLists.get_list(socket.assigns.current_user.id, list_id)
+      {:ok, integer_list_id} ->
+        list = BottichLists.get_list(socket.assigns.current_user.id, integer_list_id)
         changeset = BottichLink.change_link(%Link{})
         empty = if length(list.links) > 0, do: false, else: true
 
@@ -19,7 +19,7 @@ defmodule BottichWeb.ListLive do
          socket
          |> stream(:links, list.links)
          |> assign(
-           list_id: integer,
+           list_id: integer_list_id,
            list: Map.drop(list, [:links]),
            form: to_form(changeset),
            link_id: nil,

@@ -36,13 +36,13 @@ defmodule Bottich.BottichLists do
       ** (Ecto.NoResultsError)
 
   """
-  def get_list(user_id, id) do
+  def get_list(user_id, id) when is_integer(id) and id > 0 and is_integer(user_id) and user_id > 0 do
     from(l in List, where: l.user_id == ^user_id and l.id == ^id)
     |> Repo.one()
     |> Repo.preload(:links)
   end
 
-  def get_public_list!(id) do
+  def get_public_list!(id) when is_integer(id) and id > 0 do
     from(l in List, where: l.id == ^id and l.public == ^true)
     |> Repo.one()
     |> Repo.preload(:links)
