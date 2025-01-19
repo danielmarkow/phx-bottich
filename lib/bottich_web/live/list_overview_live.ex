@@ -1,6 +1,7 @@
 defmodule BottichWeb.ListOverviewLive do
   alias Bottich.BottichLists.List
   alias Bottich.BottichLists
+  alias Bottich.Validators
   require Logger
   use BottichWeb, :live_view
 
@@ -75,13 +76,23 @@ defmodule BottichWeb.ListOverviewLive do
   end
 
   def handle_event("set_list", %{"id" => list_id}, socket) do
-    case BottichLists.get_list(socket.assigns.current_user.id, list_id) do
-      %List{} = list ->
-        {:noreply, socket |> assign(list_loading: false, list_to_delete: list)}
+    case Validators.validate_int_id(list_id) do
+      {:ok, integer_list_id} ->
+        case BottichLists.get_list(
+               socket.assigns.current_user.id,
+               integer_list_id
+             ) do
+          %List{} = list ->
+            {:noreply, socket |> assign(list_loading: false, list_to_delete: list)}
 
-      nil ->
-        Logger.error("list fetch returned empty list")
-        {:noreply, socket |> put_flash(:error, "list not found our you don't have access")}
+          nil ->
+            Logger.error("list fetch returned empty list")
+            {:noreply, socket |> put_flash(:error, "list not found our you don't have access")}
+        end
+
+      {:error} ->
+        Logger.error("someone tried passing a invalid integer to set_list handler")
+        {:ok, socket |> push_navigate(to: "/") |> put_flash(:error, "Invalid parameter")}
     end
   end
 
