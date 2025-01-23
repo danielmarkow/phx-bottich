@@ -71,17 +71,19 @@ defmodule BottichWeb.ListLive do
           <%= if @list.public do %>
             <div class="flex gap-x-1 justify-center text-sm text-zinc-600">
               <div class="flex items-center gap-x-1">
-                this list is <span class="font-semibold">public</span>
-                at
-                <.link
-                  class="underline cursor-pointer text-sm text-zinc-800"
-                  href={~p"/public/list/#{@list_id}"}
-                  id="public-link"
-                >
-                  {url(~p"/")}public/list/{@list_id}
-                </.link>
+                <p>
+                  this list is <span class="font-semibold">public</span>
+                  at
+                  <.link
+                    class="underline cursor-pointer text-sm text-zinc-800"
+                    href={~p"/public/list/#{@list_id}"}
+                    id="public-link"
+                  >
+                    {url(~p"/")}public/list/{@list_id}
+                  </.link>
+                </p>
               </div>
-              <button type="button" phx-click={JS.dispatch("phx:clipcopy", to: "#public-link")}>
+              <button type="button" phx-click={JS.dispatch("phx:clipcopy", to: "#public-link") |> JS.push("link_copied") }>
                 <.icon name="hero-clipboard-document" class="h-8 w-8 sm:h-5 sm:w-5 cursor-pointer" />
               </button>
             </div>
@@ -268,5 +270,14 @@ defmodule BottichWeb.ListLive do
             {:noreply, socket |> put_flash(:error, "list not found or you don't have access")}
         end
     end
+  end
+
+  def handle_event("link_copied", _unsigned_params, socket) do
+    Process.send_after(self(), :clear_flash, 2000)
+    {:noreply, socket |> put_flash(:info, "link copied to clipboard")}
+  end
+
+  def handle_info(:clear_flash, socket) do
+    {:noreply, clear_flash(socket)}
   end
 end
